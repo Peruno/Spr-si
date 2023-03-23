@@ -1,2 +1,0 @@
-test for symmetry with positive and negative angles and a symmetric nozzle
-
