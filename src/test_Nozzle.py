@@ -1,6 +1,6 @@
 import numpy as np
 
-from Calculator import get_integral
+from Calculator import Calculator
 from Line import Line
 from Nozzle import Nozzle
 from Point import Point
@@ -14,7 +14,7 @@ def test_get_profile_returns_correct_total_amount():
 
     spray_distance = 20
     height_adjusted_profile = nozzle.get_profile(x_values, spray_distance)
-    height_adjusted_integral = get_integral(x_values, height_adjusted_profile)
+    height_adjusted_integral = Calculator.get_integral(x_values, height_adjusted_profile)
 
     tolerance = 0.1
     assert np.abs(nozzle.get_integral() - height_adjusted_integral) < tolerance
@@ -29,7 +29,7 @@ def test_get_profile_returns_correct_total_amount2():
 
     spray_distance = 5
     height_adjusted_profile = nozzle.get_profile(x_values, spray_distance)
-    height_adjusted_integral = get_integral(x_values, height_adjusted_profile)
+    height_adjusted_integral = Calculator.get_integral(x_values, height_adjusted_profile)
 
     tolerance = 0.1
     assert np.abs(nozzle.get_integral() - height_adjusted_integral) < tolerance

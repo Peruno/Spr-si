@@ -27,8 +27,3 @@ class Catalogue:
             raise Exception("Name not contained in catalogue.")
 
         return values
-
-
-
-
-

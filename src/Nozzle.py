@@ -1,6 +1,6 @@
 import numpy as np
 
-import Calculator
+from Calculator import Calculator
 from Catalogue import Catalogue
 from Line import Line
 from Point import Point
