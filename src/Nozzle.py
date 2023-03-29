@@ -27,6 +27,19 @@ class Nozzle:
         return angle_and_distance_adjusted_h
 
     def adjust_for_distance(self, h_0, y):
+        relative_y = self.get_relative_y(y)
+
+        return h_0 / relative_y
+
+    def get_profile_height_at_intersection_with_measurement_line(self, point):
+        relative_y = self.get_relative_y(point.y)
+        relative_x = point.x - self.nozzle_x
+
+        x_0 = relative_x / relative_y
+
+        return self.get_basic_profile_height(x_0)
+
+    def get_relative_y(self, y):
         relative_y = (self.nozzle_y - y) / self.measurement_height  # y/y_0
 
         if relative_y < 0:
@@ -34,24 +47,19 @@ class Nozzle:
         elif relative_y == 0:
             raise Exception(f"The point can not be at same y-position as the nozzle ({y, self.nozzle_y}).")
 
-        return h_0 / relative_y
-
-    def get_profile_height_at_intersection_with_measurement_line(self, point):
-        relative_y = (self.nozzle_y - point.y) / self.measurement_height  # y/y_0
-
-        if relative_y < 0:
-            raise Exception("Line is above the nozzle.")
-        elif relative_y == 0:
-            raise Exception(f"The point can not be at same y-position as the nozzle ({point.y, self.nozzle_y}).")
-
-        relative_x = point.x - self.nozzle_x
-
-        x_0 = relative_x / relative_y
-
-        return self.get_basic_profile_height(x_0)
+        return relative_y
 
     def adjust_for_angle(self, height, point):
-        return height
+        if point.beta is None:
+            return height
+
+        x_distance = np.abs(point.x - self.nozzle_x)
+        y_distance = point.y - self.nozzle_y
+        alpha = np.arctan(x_distance / y_distance)
+
+        adjustment_factor = np.cos(alpha + point.beta) / np.cos(alpha)
+
+        return height * adjustment_factor
 
     def get_profile_for_line(self, line):
         h_values = [self.get_profile(point) for point in line.get_points()]

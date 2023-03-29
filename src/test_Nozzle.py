@@ -23,7 +23,7 @@ def test_get_profile_returns_correct_total_amount():
 
 
 def test_get_profile_returns_correct_total_amount2():
-    nozzle_position = Point(0, 10)
+    nozzle_position = Point(0, 12)
     nozzle = Nozzle("nozzle1", nozzle_position)
 
     height = 5
@@ -79,3 +79,15 @@ def test_get_profile_for_line():
     assert h_expected == h_received
 
 
+def test_line_with_angle_has_correct_integral():
+    nozzle_position = Point(0, 10)
+    nozzle = Nozzle("nozzle1", nozzle_position)
+
+    start = Point(-100, -5)
+    end = Point(100, 2)
+    line_with_angle = Line(start, end)
+    profile_with_angle = nozzle.get_profile_for_line(line_with_angle)
+    integral_with_angle = Calculator.get_integral(line_with_angle.get_x_values(), profile_with_angle)
+
+    tolerance = 0.1
+    assert np.abs(nozzle.get_integral() - integral_with_angle) < tolerance

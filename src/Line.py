@@ -17,8 +17,8 @@ class Line:
 
         self.start_point = start
         self.end_point = end
-        self.points = self.__initialize_points(number_of_points)
         self.beta = self.__calculate_angle()
+        self.points = self.__initialize_points(number_of_points)
 
     def get_angle(self):
         return self.beta
@@ -47,6 +47,6 @@ class Line:
 
         points = []
         for (x, y) in zip(x_values, y_values):
-            points.append(Point(x, y))
+            points.append(Point(x, y, self.beta))
 
         return points
