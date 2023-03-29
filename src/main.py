@@ -12,7 +12,7 @@ if __name__ == "__main__":
     end_point = Point(10, 0)
     big_line = Line(start_point, end_point)
 
-    h_values = nozzle.get_profile_for_line(big_line)
+    h_values = nozzle.get_spray_height_for_line(big_line)
 
     left_outer_line = nozzle.get_left_outer_line(big_line)
     right_outer_line = nozzle.get_right_outer_line(big_line)

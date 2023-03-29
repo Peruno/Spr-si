@@ -19,9 +19,9 @@ class Nozzle:
         self.nozzle_y = nozzle_position.y
         self.measurement_crossing_left, self.measurement_crossing_right = self.get_zero_crossings()
 
-    def get_profile(self, point):
+    def get_spray_height(self, point):
 
-        h_0 = self.get_profile_height_at_intersection_with_measurement_line(point)
+        h_0 = self.get_spray_height_at_intersection_with_measurement_line(point)
         distance_adjusted_h = self.adjust_for_distance(h_0, point.y)
         angle_and_distance_adjusted_h = self.adjust_for_angle(distance_adjusted_h, point)
         return angle_and_distance_adjusted_h
@@ -31,13 +31,13 @@ class Nozzle:
 
         return h_0 / relative_y
 
-    def get_profile_height_at_intersection_with_measurement_line(self, point):
+    def get_spray_height_at_intersection_with_measurement_line(self, point):
         relative_y = self.get_relative_y(point.y)
         relative_x = point.x - self.nozzle_x
 
         x_0 = relative_x / relative_y
 
-        return self.get_basic_profile_height(x_0)
+        return self.get_basic_spray_height(x_0)
 
     def get_relative_y(self, y):
         relative_y = (self.nozzle_y - y) / self.measurement_height  # y/y_0
@@ -61,12 +61,12 @@ class Nozzle:
 
         return height * adjustment_factor
 
-    def get_profile_for_line(self, line):
-        h_values = [self.get_profile(point) for point in line.get_points()]
+    def get_spray_height_for_line(self, line):
+        h_values = [self.get_spray_height(point) for point in line.get_points()]
 
         return h_values
 
-    def get_basic_profile_height(self, x):
+    def get_basic_spray_height(self, x):
         if isinstance(x, int) or isinstance(x, float):
             if self.measurement_crossing_left <= x <= self.measurement_crossing_right:
                 return np.polyval(self.polynomial_fit_coefficients, x)
@@ -83,7 +83,7 @@ class Nozzle:
 
     def get_integral(self, baskets=1000):
         x_values = np.linspace(self.measurement_crossing_left, self.measurement_crossing_right, baskets)
-        y_values = self.get_basic_profile_height(x_values)
+        y_values = self.get_basic_spray_height(x_values)
         return Calculator.get_integral(x_values, y_values)
 
     def get_zero_crossings(self):
