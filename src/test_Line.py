@@ -9,7 +9,7 @@ def test_line_throws_if_start_and_end_are_equal():
     start_point = Point(0, 0)
     end_point = Point(0, 0)
     with pytest.raises(Exception):
-        line = Line(start_point, end_point)
+        Line(start_point, end_point)
 
 
 def test_line_throws_if_end_left_of_start():
@@ -17,7 +17,7 @@ def test_line_throws_if_end_left_of_start():
     end_point = Point(-1, 0)
 
     with pytest.raises(Exception):
-        line = Line(start_point, end_point)
+        Line(start_point, end_point)
 
 
 def test_get_angle_case1():

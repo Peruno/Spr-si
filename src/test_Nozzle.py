@@ -7,29 +7,32 @@ from Point import Point
 
 
 def test_get_profile_returns_correct_total_amount():
-    nozzle_position = Point(0, 0)
+    nozzle_position = Point(0, 10)
     nozzle = Nozzle("nozzle1", nozzle_position)
 
-    x_values = np.linspace(-10, 10, 10000)
+    height = 5
+    start = Point(-10, height)
+    end = Point(10, height)
+    line = Line(start, end)
 
-    spray_distance = 20
-    height_adjusted_profile = nozzle.get_profile(x_values, spray_distance)
-    height_adjusted_integral = Calculator.get_integral(x_values, height_adjusted_profile)
+    height_adjusted_profile = nozzle.get_profile_for_line(line)
+    height_adjusted_integral = Calculator.get_integral(line.get_x_values(), height_adjusted_profile)
 
     tolerance = 0.1
     assert np.abs(nozzle.get_integral() - height_adjusted_integral) < tolerance
 
 
 def test_get_profile_returns_correct_total_amount2():
-    nozzle_position = Point(0, 0)
-
+    nozzle_position = Point(0, 10)
     nozzle = Nozzle("nozzle1", nozzle_position)
 
-    x_values = np.linspace(-10, 10, 10000)
+    height = 5
+    start = Point(-10, height)
+    end = Point(10, height)
+    line = Line(start, end)
 
-    spray_distance = 5
-    height_adjusted_profile = nozzle.get_profile(x_values, spray_distance)
-    height_adjusted_integral = Calculator.get_integral(x_values, height_adjusted_profile)
+    height_adjusted_profile = nozzle.get_profile_for_line(line)
+    height_adjusted_integral = Calculator.get_integral(line.get_x_values(), height_adjusted_profile)
 
     tolerance = 0.1
     assert np.abs(nozzle.get_integral() - height_adjusted_integral) < tolerance
@@ -48,13 +51,10 @@ def test_get_basic_profile_height_does_not_crash():
 
 def test_get_profile_returns_0_if_outside_of_range():
 
-    nozzle_position = Point(0, 0)
-
+    nozzle_position = Point(0, 10)
     nozzle = Nozzle("nozzle1", nozzle_position)
-    measurement_height = nozzle.measurement_height
 
-    assert 0 == nozzle.get_profile(-6, measurement_height)
-    assert 0 == nozzle.get_profile(-18, 3 * measurement_height)
+    assert 0 == nozzle.get_profile(Point(-6, 0))
 
 
 def test_get_zero_crossings():
@@ -73,7 +73,7 @@ def test_get_profile_for_line():
     end_point = Point(10, 0)
     line = Line(start_point, end_point)
 
-    h_expected = [nozzle.get_profile(point.x, point.y) for point in line.get_points()]
+    h_expected = [nozzle.get_profile(point) for point in line.get_points()]
     h_received = nozzle.get_profile_for_line(line)
 
     assert h_expected == h_received

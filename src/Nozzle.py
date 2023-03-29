@@ -19,21 +19,42 @@ class Nozzle:
         self.nozzle_y = nozzle_position.y
         self.measurement_crossing_left, self.measurement_crossing_right = self.get_zero_crossings()
 
-    def get_profile(self, x, y):
-        relative_y = np.abs(y - self.nozzle_y) / self.measurement_height  # y/y_0
-        if relative_y == 0:
-            raise Exception(f"The point can not be at same y-position as the nozzle ({y, self.nozzle_y})")
+    def get_profile(self, point):
 
-        relative_x = x - self.nozzle_x
+        h_0 = self.get_profile_height_at_intersection_with_measurement_line(point)
+        distance_adjusted_h = self.adjust_for_distance(h_0, point.y)
+        angle_and_distance_adjusted_h = self.adjust_for_angle(distance_adjusted_h, point)
+        return angle_and_distance_adjusted_h
+
+    def adjust_for_distance(self, h_0, y):
+        relative_y = (self.nozzle_y - y) / self.measurement_height  # y/y_0
+
+        if relative_y < 0:
+            raise Exception("Line is above the nozzle.")
+        elif relative_y == 0:
+            raise Exception(f"The point can not be at same y-position as the nozzle ({y, self.nozzle_y}).")
+
+        return h_0 / relative_y
+
+    def get_profile_height_at_intersection_with_measurement_line(self, point):
+        relative_y = (self.nozzle_y - point.y) / self.measurement_height  # y/y_0
+
+        if relative_y < 0:
+            raise Exception("Line is above the nozzle.")
+        elif relative_y == 0:
+            raise Exception(f"The point can not be at same y-position as the nozzle ({point.y, self.nozzle_y}).")
+
+        relative_x = point.x - self.nozzle_x
 
         x_0 = relative_x / relative_y
-        h_0 = self.get_basic_profile_height(x_0)
 
-        distance_adjusted_h = h_0 / relative_y
-        return distance_adjusted_h
+        return self.get_basic_profile_height(x_0)
+
+    def adjust_for_angle(self, height, point):
+        return height
 
     def get_profile_for_line(self, line):
-        h_values = [self.get_profile(point.x, point.y) for point in line.get_points()]
+        h_values = [self.get_profile(point) for point in line.get_points()]
 
         return h_values
 
