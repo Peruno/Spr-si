@@ -15,6 +15,9 @@ class Line:
         if end.x < start.x:
             raise Exception("Endpoint should be right of startpoint.")
 
+        if number_of_points < 2:
+            raise Exception("A line must consist of at least 2 points.")
+
         self.start_point = start
         self.end_point = end
         self.beta = self.__calculate_angle()
@@ -33,13 +36,13 @@ class Line:
         return [point.y for point in self.points]
 
     def __calculate_angle(self):
-        x_diff = self.start_point.x - self.end_point.x
-        y_diff = self.start_point.y - self.end_point.y
+        x_diff = self.end_point.x - self.start_point.x
+        y_diff = self.end_point.y - self.start_point.y
 
         if x_diff == 0:
             return np.pi / 2
 
-        return np.arctan(y_diff / x_diff)
+        return -np.arctan(y_diff / x_diff)
 
     def __initialize_points(self, number_of_points):
         x_values = np.linspace(self.start_point.x, self.end_point.x, number_of_points)

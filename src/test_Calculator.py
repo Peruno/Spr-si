@@ -20,3 +20,10 @@ def test_get_crossing_point_case2():
 
     with pytest.raises(Exception):
         Calculator.get_crossing_point(line1, line2)
+
+
+def test_get_integral():
+    x_values = [0, 1]
+    y_values = [1, 1]
+
+    assert Calculator.get_integral(x_values, y_values) == 1

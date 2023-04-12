@@ -6,7 +6,7 @@ from Nozzle import Nozzle
 from Point import Point
 
 
-def test_get_profile_returns_correct_total_amount():
+def test_get_spray_height_returns_correct_total_amount():
     nozzle_position = Point(0, 10)
     nozzle = Nozzle("nozzle1", nozzle_position)
 
@@ -15,14 +15,14 @@ def test_get_profile_returns_correct_total_amount():
     end = Point(10, height)
     line = Line(start, end)
 
-    height_adjusted_profile = nozzle.get_spray_height_for_line(line)
-    height_adjusted_integral = Calculator.get_integral(line.get_x_values(), height_adjusted_profile)
+    heights = nozzle.get_spray_height_for_line(line)
+    integral = Calculator.get_integral(line.get_x_values(), heights)
 
     tolerance = 0.1
-    assert np.abs(nozzle.get_integral() - height_adjusted_integral) < tolerance
+    assert np.abs(nozzle.get_integral() - integral) < tolerance
 
 
-def test_get_profile_returns_correct_total_amount2():
+def test_get_spray_heights_returns_correct_total_amount2():
     nozzle_position = Point(0, 12)
     nozzle = Nozzle("nozzle1", nozzle_position)
 
@@ -31,14 +31,14 @@ def test_get_profile_returns_correct_total_amount2():
     end = Point(10, height)
     line = Line(start, end)
 
-    height_adjusted_profile = nozzle.get_spray_height_for_line(line)
-    height_adjusted_integral = Calculator.get_integral(line.get_x_values(), height_adjusted_profile)
+    spray_heights = nozzle.get_spray_height_for_line(line)
+    integral = Calculator.get_integral(line.get_x_values(), spray_heights)
 
     tolerance = 0.1
-    assert np.abs(nozzle.get_integral() - height_adjusted_integral) < tolerance
+    assert np.abs(nozzle.get_integral() - integral) < tolerance
 
 
-def test_get_basic_profile_height_does_not_crash():
+def test_get_basic_spray_height_does_not_crash():
     nozzle_position = Point(0, 0)
 
     nozzle = Nozzle("nozzle1", nozzle_position)
@@ -49,7 +49,7 @@ def test_get_basic_profile_height_does_not_crash():
     print(y_values)
 
 
-def test_get_profile_returns_0_if_outside_of_range():
+def test_get_spray_height_returns_0_if_outside_of_range():
 
     nozzle_position = Point(0, 10)
     nozzle = Nozzle("nozzle1", nozzle_position)
@@ -66,7 +66,7 @@ def test_get_zero_crossings():
     assert 5 < x_2 < 5.5
 
 
-def test_get_profile_for_line():
+def test_get_spray_height_for_line():
     nozzle_position = Point(0, 20)
     nozzle = Nozzle("nozzle1", nozzle_position)
     start_point = Point(0, 0)
@@ -79,15 +79,15 @@ def test_get_profile_for_line():
     assert h_expected == h_received
 
 
-def test_line_with_angle_has_correct_integral():
-    nozzle_position = Point(0, 10)
-    nozzle = Nozzle("nozzle1", nozzle_position)
+def test_radius_covered_by_big_line():
+    line = Line(Point(-1000, 0), Point(1, 1000))
+    nozzle = Nozzle("nozzle1", Point(10, 0))
 
-    start = Point(-100, -5)
-    end = Point(100, 2)
-    line_with_angle = Line(start, end)
-    profile_with_angle = nozzle.get_spray_height_for_line(line_with_angle)
-    integral_with_angle = Calculator.get_integral(line_with_angle.get_x_values(), profile_with_angle)
+    assert nozzle.is_radius_covered_by(line)
 
-    tolerance = 0.1
-    assert np.abs(nozzle.get_integral() - integral_with_angle) < tolerance
+
+def test_radius_covered_by_small_line():
+    line = Line(Point(-1, 0), Point(1, 1))
+    nozzle = Nozzle("nozzle1", Point(10, 0))
+
+    assert not nozzle.is_radius_covered_by(line)

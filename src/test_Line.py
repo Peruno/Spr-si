@@ -20,6 +20,14 @@ def test_line_throws_if_end_left_of_start():
         Line(start_point, end_point)
 
 
+def test_line_throws_if_only_one_point_is_given():
+    start_point = Point(0, 0)
+    end_point = Point(-1, 0)
+
+    with pytest.raises(Exception):
+        Line(start_point, end_point, 1)
+
+
 def test_get_angle_case1():
     start_point = Point(0, 0)
     end_point = Point(2, 0)
@@ -37,7 +45,7 @@ def test_get_angle_case2():
     line = Line(start_point, end_point)
     angle = line.get_angle()
 
-    assert angle == pi / 4
+    assert angle == -pi / 4
 
 
 def test_get_angle_case3():
@@ -47,7 +55,7 @@ def test_get_angle_case3():
 
     angle = line.get_angle()
 
-    assert angle == -pi / 4
+    assert angle == pi / 4
 
 
 def test_get_angle_case4():

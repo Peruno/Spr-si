@@ -4,6 +4,9 @@ from Point import Point
 class Calculator:
     @staticmethod
     def get_integral(x_values, y_values):
+        """If one imagines a function that is fitted as to pass through the points defined by the x and y values,
+        then this method returns the integral of the function from left to right."""
+
         if len(x_values) != len(y_values):
             raise Exception("Length not equal!")
 

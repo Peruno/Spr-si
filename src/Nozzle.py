@@ -22,9 +22,9 @@ class Nozzle:
     def get_spray_height(self, point):
 
         h_0 = self.get_spray_height_at_intersection_with_measurement_line(point)
-        distance_adjusted_h = self.adjust_for_distance(h_0, point.y)
-        angle_and_distance_adjusted_h = self.adjust_for_angle(distance_adjusted_h, point)
-        return angle_and_distance_adjusted_h
+        h_distance_adjusted = self.adjust_for_distance(h_0, point.y)
+        h_distance_and_angle_adjusted = self.adjust_for_angle(h_distance_adjusted, point)
+        return h_distance_and_angle_adjusted
 
     def adjust_for_distance(self, h_0, y):
         relative_y = self.get_relative_y(y)
@@ -82,7 +82,7 @@ class Nozzle:
         return result
 
     def get_integral(self, baskets=1000):
-        x_values = np.linspace(self.measurement_crossing_left, self.measurement_crossing_right, baskets)
+        x_values = np.linspace(self.measurement_crossing_left - 1, self.measurement_crossing_right + 1, baskets)
         y_values = self.get_basic_spray_height(x_values)
         return Calculator.get_integral(x_values, y_values)
 
@@ -90,15 +90,15 @@ class Nozzle:
         x_values = np.linspace(min(self.x_measurement) - 1, max(self.x_measurement) + 1, 1000)
         y_values = np.polyval(self.polynomial_fit_coefficients, x_values)
 
-        crossing_points = []
+        crossing_x_values = []
         for i in range(len(y_values) - 1):
             if (y_values[i] < 0 < y_values[i + 1]) or (y_values[i] > 0 > y_values[i + 1]):
-                crossing_points.append((x_values[i] + x_values[i + 1]) / 2)
+                crossing_x_values.append((x_values[i] + x_values[i + 1]) / 2)
 
-        if len(crossing_points) != 2:
+        if len(crossing_x_values) != 2:
             raise Exception("Not exactly 2 intersections with x-Axis!")
 
-        return crossing_points[0], crossing_points[1]
+        return crossing_x_values[0], crossing_x_values[1]
 
     def get_left_outer_line(self, surface_line):
         start_point_measurement = Point(self.measurement_crossing_left, 0)
@@ -131,3 +131,11 @@ class Nozzle:
 
         line_from_nozzle_to_surface = Line(Point(self.nozzle_x, self.nozzle_y), crossing_with_surface)
         return line_from_nozzle_to_surface
+
+    def is_radius_covered_by(self, line):
+        left_within = self.measurement_crossing_left > line.get_x_values()[0]
+        right_within = self.measurement_crossing_right > line.get_x_values()[-1]
+
+
+        assert False # still false!!! Uses crossings with measurement line
+        return left_within and right_within
