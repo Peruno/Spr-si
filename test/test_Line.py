@@ -1,7 +1,7 @@
 import pytest
 
-from Line import Line
-from Point import Point
+from main.Line import Line
+from main.Point import Point
 from numpy import pi
 
 

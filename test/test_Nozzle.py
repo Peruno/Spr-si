@@ -1,9 +1,9 @@
 import numpy as np
 
-from Calculator import Calculator
-from Line import Line
-from Nozzle import Nozzle
-from Point import Point
+from main.Calculator import Calculator
+from main.Line import Line
+from main.Nozzle import Nozzle
+from main.Point import Point
 
 
 def test_get_spray_height_returns_correct_total_amount():

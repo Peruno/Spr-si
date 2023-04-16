@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.Point import Point
+from main.Point import Point
 
 
 class Profile:

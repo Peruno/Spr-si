@@ -1,8 +1,8 @@
 import pytest
 
-from Calculator import Calculator
-from Line import Line
-from Point import Point
+from main.Calculator import Calculator
+from main.Line import Line
+from main.Point import Point
 
 
 def test_get_crossing_point():

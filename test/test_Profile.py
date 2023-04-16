@@ -1,10 +1,10 @@
 import numpy as np
 import pytest
 
-from src.Line import Line
-from src.Nozzle import Nozzle
-from src.Point import Point
-from src.Profile import Profile
+from main.Line import Line
+from main.Nozzle import Nozzle
+from main.Point import Point
+from main.Profile import Profile
 from pytest import approx
 
 

@@ -1,9 +1,9 @@
 import numpy as np
 
-from Calculator import Calculator
-from Catalogue import Catalogue
-from Line import Line
-from Point import Point
+from main.Calculator import Calculator
+from main.Catalogue import Catalogue
+from main.Line import Line
+from main.Point import Point
 
 
 class Nozzle:
@@ -20,7 +20,6 @@ class Nozzle:
         self.measurement_crossing_left, self.measurement_crossing_right = self.get_zero_crossings()
 
     def get_spray_height(self, point):
-
         h_0 = self.get_spray_height_at_intersection_with_measurement_line(point)
         h_distance_adjusted = self.adjust_for_distance(h_0, point.y)
         h_distance_and_angle_adjusted = self.adjust_for_angle(h_distance_adjusted, point)
@@ -50,7 +49,7 @@ class Nozzle:
         return relative_y
 
     def adjust_for_angle(self, height, point):
-        if point.beta is None:
+        if not point.beta:
             return height
 
         x_distance = np.abs(point.x - self.nozzle_x)
