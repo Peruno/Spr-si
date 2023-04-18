@@ -80,14 +80,14 @@ def test_get_spray_height_for_line():
 
 
 def test_radius_covered_by_big_line():
-    line = Line(Point(-1000, 0), Point(1, 1000))
-    nozzle = Nozzle("nozzle1", Point(10, 0))
+    line = Line(Point(-1000, 0), Point(1000, 0))
+    nozzle = Nozzle("nozzle1", Point(0, 10))
 
     assert nozzle.is_radius_covered_by(line)
 
 
 def test_radius_covered_by_small_line():
     line = Line(Point(-1, 0), Point(1, 1))
-    nozzle = Nozzle("nozzle1", Point(10, 0))
+    nozzle = Nozzle("nozzle1", Point(0, 10))
 
     assert not nozzle.is_radius_covered_by(line)

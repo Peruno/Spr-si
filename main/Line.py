@@ -48,8 +48,4 @@ class Line:
         x_values = np.linspace(self.start_point.x, self.end_point.x, number_of_points)
         y_values = np.linspace(self.start_point.y, self.end_point.y, number_of_points)
 
-        points = []
-        for (x, y) in zip(x_values, y_values):
-            points.append(Point(x, y, self.beta))
-
-        return points
+        return [Point(x, y, self.beta) for (x, y) in zip(x_values, y_values)]

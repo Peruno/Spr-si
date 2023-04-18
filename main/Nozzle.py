@@ -31,12 +31,15 @@ class Nozzle:
         return h_0 / relative_y
 
     def get_spray_height_at_intersection_with_measurement_line(self, point):
+        x_0 = self.get_x_projected_to_measurement_line(point)
+
+        return self.get_basic_spray_height(x_0)
+
+    def get_x_projected_to_measurement_line(self, point):
         relative_y = self.get_relative_y(point.y)
         relative_x = point.x - self.nozzle_x
 
-        x_0 = relative_x / relative_y
-
-        return self.get_basic_spray_height(x_0)
+        return relative_x / relative_y
 
     def get_relative_y(self, y):
         relative_y = (self.nozzle_y - y) / self.measurement_height  # y/y_0
@@ -132,9 +135,8 @@ class Nozzle:
         return line_from_nozzle_to_surface
 
     def is_radius_covered_by(self, line):
-        left_within = self.measurement_crossing_left > line.get_x_values()[0]
-        right_within = self.measurement_crossing_right > line.get_x_values()[-1]
+        leftmost_point, *others, rightmost_point = line.get_points()
+        left_projected = self.get_x_projected_to_measurement_line(leftmost_point)
+        right_projected = self.get_x_projected_to_measurement_line(rightmost_point)
 
-
-        assert False # still false!!! Uses crossings with measurement line
-        return left_within and right_within
+        return left_projected < self.measurement_crossing_left and right_projected > self.measurement_crossing_right
