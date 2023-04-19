@@ -1,4 +1,4 @@
-from main.Point import Point
+from src.Point import Point
 
 
 class Calculator:

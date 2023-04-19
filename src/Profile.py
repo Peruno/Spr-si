@@ -1,9 +1,12 @@
 import numpy as np
 
-from main.Point import Point
+from src.Point import Point
 
 
 class Profile:
+    """Given a line and it's spray heights, this class will calculate the profile to be displayed.
+    It will rotate the points w.r.t. the angle of the line and filter for only non-zero values."""
+
     def __init__(self, line, spray_heights):
         if len(line.get_points()) != len(spray_heights):
             raise Exception("The number of points in the line the the number of values for the spray_heights do not "
@@ -12,9 +15,10 @@ class Profile:
         beta = line.get_angle()
         points = []
         for position, spray_height in zip(line.get_points(), spray_heights):
-            x = position.x + spray_height * np.sin(beta)
-            y = position.y + spray_height * np.cos(beta)
-            points.append(Point(x, y))
+            if spray_height > 0:
+                x = position.x + spray_height * np.sin(beta)
+                y = position.y + spray_height * np.cos(beta)
+                points.append(Point(x, y))
 
         self.points = points
         self.integral = Profile._calculate_integral(line, spray_heights)

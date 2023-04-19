@@ -1,6 +1,6 @@
 import numpy as np
 
-from main.Point import Point
+from src.Point import Point
 
 
 class Line:

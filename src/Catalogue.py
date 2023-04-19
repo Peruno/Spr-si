@@ -3,7 +3,8 @@ class Catalogue:
         "nozzle1": {
             "height": 20,
             "x_measurement": [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5],
-            "h_measurement": [0, 5, 4, 4, 4, 4, 4, 4, 4, 5, 0]}
+            "h_measurement": [0, 5, 4, 4, 4, 4, 4, 4, 4, 5, 0]
+        },
     }
 
     def __init__(self, name):

@@ -1,10 +1,10 @@
 import numpy as np
 import pytest
 
-from main.Line import Line
-from main.Nozzle import Nozzle
-from main.Point import Point
-from main.Profile import Profile
+from src.Line import Line
+from src.Nozzle import Nozzle
+from src.Point import Point
+from src.Profile import Profile
 from pytest import approx
 
 
@@ -16,8 +16,16 @@ def test_profile_raises_if_line_and_spray_heights_do_not_fit():
         Profile(line, spray_heights)
 
 
-def test_profile_invariant_for_horizontal_line():
+def test_profile_invariant_for_horizontal_and_covered_line():
+    line = Line(Point(0, 0), Point(1, 0), number_of_points=2)
+    spray_heights = [1, 1]
+    profile = Profile(line, spray_heights)
 
+    assert profile.get_x_values() == line.get_x_values()
+    assert profile.get_y_values() == spray_heights
+
+
+def test_profile_only_keeps_non_zero_values():
     horizontal_line = Line(Point(0, 0), Point(10, 0), 10)
     nozzle = Nozzle("nozzle1", Point(5, 5))
     spray_heights = nozzle.get_spray_height_for_line(horizontal_line)
@@ -26,12 +34,11 @@ def test_profile_invariant_for_horizontal_line():
     x_values = profile.get_x_values()
     y_values = profile.get_y_values()
 
-    assert x_values == horizontal_line.get_x_values()
-    assert y_values == spray_heights
+    assert x_values == [x for (x, y) in zip(horizontal_line.get_x_values(), spray_heights) if y > 0]
+    assert y_values == [h for h in spray_heights if h > 0]
 
 
 def test_profile_works_for_right_tilted_line():
-
     horizontal_line = Line(Point(0, 0), Point(1, -1), number_of_points=2)
     spray_heights = [1, 1]
     profile = Profile(horizontal_line, spray_heights)
@@ -44,7 +51,6 @@ def test_profile_works_for_right_tilted_line():
 
 
 def test_profile_works_for_left_tilted_line():
-
     horizontal_line = Line(Point(0, 0), Point(1, 1), number_of_points=2)
     spray_heights = [1, 1]
     profile = Profile(horizontal_line, spray_heights)

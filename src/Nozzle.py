@@ -1,9 +1,9 @@
 import numpy as np
 
-from main.Calculator import Calculator
-from main.Catalogue import Catalogue
-from main.Line import Line
-from main.Point import Point
+from src.Calculator import Calculator
+from src.Catalogue import Catalogue
+from src.Line import Line
+from src.Point import Point
 
 
 class Nozzle:

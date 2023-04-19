@@ -1,4 +1,4 @@
-from main.Catalogue import Catalogue
+from src.Catalogue import Catalogue
 
 
 def test_get_height():
