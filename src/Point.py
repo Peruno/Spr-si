@@ -8,3 +8,6 @@ class Point:
         if not isinstance(other, Point):
             return False
         return self.x == other.x and self.y == other.y
+
+    def __repr__(self):
+        return f"Point({self.x}, {self.y})"

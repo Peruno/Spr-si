@@ -17,23 +17,30 @@ class Nozzle:
 
         self.nozzle_x = nozzle_position.x
         self.nozzle_y = nozzle_position.y
-        self.measurement_crossing_left, self.measurement_crossing_right = self.get_zero_crossings()
+        self.alpha = 0
+        self.measurement_crossing_left, self.measurement_crossing_right = self._get_zero_crossings()
 
-    def get_spray_height(self, point):
+    def get_spray_height_for_line(self, line):
+        if self.alpha != 0:
+            line = self._transform_line_to_rotated_system(line)
+
+        return [self._get_spray_height_for_point(point) for point in line.get_points()]
+
+    def _get_spray_height_for_point(self, point):
         h_0 = self.get_spray_height_at_intersection_with_measurement_line(point)
         h_distance_adjusted = self.adjust_for_distance(h_0, point.y)
         h_distance_and_angle_adjusted = self.adjust_for_angle(h_distance_adjusted, point)
         return h_distance_and_angle_adjusted
 
+    def get_spray_height_at_intersection_with_measurement_line(self, point):
+        x_0 = self.get_x_projected_to_measurement_line(point)
+
+        return self._get_basic_spray_height(x_0)
+
     def adjust_for_distance(self, h_0, y):
         relative_y = self.get_relative_y(y)
 
         return h_0 / relative_y
-
-    def get_spray_height_at_intersection_with_measurement_line(self, point):
-        x_0 = self.get_x_projected_to_measurement_line(point)
-
-        return self.get_basic_spray_height(x_0)
 
     def get_x_projected_to_measurement_line(self, point):
         relative_y = self.get_relative_y(point.y)
@@ -63,32 +70,21 @@ class Nozzle:
 
         return height * adjustment_factor
 
-    def get_spray_height_for_line(self, line):
-        h_values = [self.get_spray_height(point) for point in line.get_points()]
+    def _transform_line_to_rotated_system(self, line):
+        raise Exception
 
-        return h_values
-
-    def get_basic_spray_height(self, x):
-        if isinstance(x, int) or isinstance(x, float):
-            if self.measurement_crossing_left <= x <= self.measurement_crossing_right:
-                return np.polyval(self.polynomial_fit_coefficients, x)
-            else:
-                return 0
-
-        result = []
-        for x_value in x:
-            if self.measurement_crossing_left <= x_value <= self.measurement_crossing_right:
-                result.append(np.polyval(self.polynomial_fit_coefficients, x_value))
-            else:
-                result.append(0)
-        return result
+    def _get_basic_spray_height(self, x):
+        if self.measurement_crossing_left <= x <= self.measurement_crossing_right:
+            return np.polyval(self.polynomial_fit_coefficients, x)
+        else:
+            return 0
 
     def get_integral(self, baskets=1000):
         x_values = np.linspace(self.measurement_crossing_left - 1, self.measurement_crossing_right + 1, baskets)
-        y_values = self.get_basic_spray_height(x_values)
+        y_values = [self._get_basic_spray_height(x) for x in x_values]
         return Calculator.get_integral(x_values, y_values)
 
-    def get_zero_crossings(self):
+    def _get_zero_crossings(self):
         x_values = np.linspace(min(self.x_measurement) - 1, max(self.x_measurement) + 1, 1000)
         y_values = np.polyval(self.polynomial_fit_coefficients, x_values)
 
@@ -140,3 +136,11 @@ class Nozzle:
         right_projected = self.get_x_projected_to_measurement_line(rightmost_point)
 
         return left_projected < self.measurement_crossing_left and right_projected > self.measurement_crossing_right
+
+    def set_angle_in_degrees(self, alpha):
+        if not -90 <= alpha <= 90:
+            raise Exception("Only angles between -90 and +90 degrees are allowed.")
+
+        angle_in_radiant = alpha / 180 * np.pi
+
+        self.alpha = angle_in_radiant

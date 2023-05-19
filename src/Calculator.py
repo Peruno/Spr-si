@@ -1,3 +1,6 @@
+import numpy as np
+import math
+
 from src.Point import Point
 
 
@@ -45,3 +48,15 @@ class Calculator:
         y_cross = (b_2 - b_1) / (a_1 - a_2) * a_1 + b_1
 
         return Point(x_cross, y_cross)
+
+    @staticmethod
+    def rotate_around_by(origin, point, angle):
+        """
+        Rotate a point counterclockwise by a given angle around a given origin.
+
+        The angle should be given in radians.
+        """
+
+        x = origin.x + math.cos(angle) * (point.x - origin.x) - math.sin(angle) * (point.y - origin.y)
+        y = origin.y + math.sin(angle) * (point.x - origin.x) + math.cos(angle) * (point.y - origin.y)
+        return Point(x, y)
