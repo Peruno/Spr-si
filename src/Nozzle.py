@@ -33,9 +33,9 @@ class Nozzle:
         return h_distance_and_angle_adjusted
 
     def get_spray_height_at_intersection_with_measurement_line(self, point):
-        x_0 = self.get_x_projected_to_measurement_line(point)
-
-        return self._get_basic_spray_height(x_0)
+        if x_0 := self.get_x_projected_to_measurement_line(point):
+            return self._get_basic_spray_height(x_0)
+        return 0
 
     def adjust_for_distance(self, h_0, y):
         try:
@@ -50,7 +50,7 @@ class Nozzle:
             relative_y = self.get_relative_y(point.y)
         except:
             # If that is not possible, return value outside of range
-            return 0
+            return None
 
         relative_x = point.x - self.position.x
         return relative_x / relative_y

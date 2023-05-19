@@ -4,7 +4,7 @@ from src.Point import Point
 
 
 class Profile:
-    """Given a line and it's spray heights, this class will calculate the profile to be displayed.
+    """Given a line, and it's spray heights, this class will calculate the profile to be displayed.
     It will rotate the points w.r.t. the angle of the line and filter for only non-zero values."""
 
     def __init__(self, line, spray_heights):
