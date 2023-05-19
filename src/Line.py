@@ -21,6 +21,7 @@ class Line:
         self.start_point = start
         self.end_point = end
         self.beta = self.__calculate_angle()
+        self.number_of_points = number_of_points
         self.points = self.__initialize_points(number_of_points)
 
     def get_angle(self):
@@ -40,6 +41,9 @@ class Line:
 
     def get_end_point(self):
         return self.end_point
+
+    def get_number_of_points(self):
+        return self.number_of_points
 
     def __calculate_angle(self):
         x_diff = self.end_point.x - self.start_point.x

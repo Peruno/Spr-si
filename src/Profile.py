@@ -9,8 +9,8 @@ class Profile:
 
     def __init__(self, line, spray_heights):
         if len(line.get_points()) != len(spray_heights):
-            raise Exception("The number of points in the line the the number of values for the spray_heights do not "
-                            "match")
+            raise Exception("The number of points in the line and the the number of values for the spray_heights do "
+                            "not match")
 
         beta = line.get_angle()
         points = []
