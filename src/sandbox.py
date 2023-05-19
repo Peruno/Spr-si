@@ -1,22 +1,31 @@
 #!/usr/bin/env python3
 
-from Point import Point
-from src.Calculator import Calculator
-import numpy as np
+import matplotlib.pyplot as plt
 
+from Line import Line
+from Nozzle import Nozzle
+from Point import Point
+from src.Profile import Profile
 
 if __name__ == "__main__":
-    # tolerance = 0.0001
-    #
-    # a = Point(-1, 0.001)
-    # b = Point(0, 0)
-    #
-    # c = Calculator.rotate_around_by(a, b, np.pi / 2)
-    # expected = Point(0, -1)
-    #
-    # assert np.abs(c.x - expected.x) < tolerance
-    # assert np.abs(c.y - expected.y) < tolerance
-    a = Point(0, 0)
-    b = Point(1, 1)
+    nozzle_x = 0
+    nozzle_y = 10
+    start_x = 0
+    start_y = 0
+    end_x = 10
+    end_y = -5
+    alpha = -70
 
-    assert Calculator.get_angle_between(a, b) == np.pi / 4
+    start_point = Point(start_x, start_y)
+    end_point = Point(end_x, end_y)
+    line = Line(start_point, end_point, number_of_points=3)
+
+    nozzle_position = Point(nozzle_x, nozzle_y)
+    nozzle = Nozzle("nozzle1", nozzle_position)
+    nozzle.set_angle_in_degrees(alpha)
+    h_values = nozzle.get_spray_height_for_line(line)
+
+    profile = Profile(line, h_values)
+
+    plt.plot(profile.get_x_values(), profile.get_y_values())
+    plt.show()
