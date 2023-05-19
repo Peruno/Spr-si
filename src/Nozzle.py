@@ -15,14 +15,13 @@ class Nozzle:
         self.h_measurement = catalogue.get_h_measurement()
         self.polynomial_fit_coefficients = np.polyfit(self.x_measurement, self.h_measurement, deg=5)
 
-        self.nozzle_x = nozzle_position.x
-        self.nozzle_y = nozzle_position.y
+        self.position = nozzle_position
         self.alpha = 0
         self.measurement_crossing_left, self.measurement_crossing_right = self._get_zero_crossings()
 
     def get_spray_height_for_line(self, line):
         if self.alpha != 0:
-            line = self._transform_line_to_rotated_system(line)
+            line = self._transform_line_into_rotated_system(line)
 
         return [self._get_spray_height_for_point(point) for point in line.get_points()]
 
@@ -44,17 +43,17 @@ class Nozzle:
 
     def get_x_projected_to_measurement_line(self, point):
         relative_y = self.get_relative_y(point.y)
-        relative_x = point.x - self.nozzle_x
+        relative_x = point.x - self.position.x
 
         return relative_x / relative_y
 
     def get_relative_y(self, y):
-        relative_y = (self.nozzle_y - y) / self.measurement_height  # y/y_0
+        relative_y = (self.position.y - y) / self.measurement_height  # y/y_0
 
         if relative_y < 0:
             raise Exception("Line is above the nozzle.")
         elif relative_y == 0:
-            raise Exception(f"The point can not be at same y-position as the nozzle ({y, self.nozzle_y}).")
+            raise Exception(f"The point can not be at same y-position as the nozzle ({y, self.position.y}).")
 
         return relative_y
 
@@ -62,16 +61,22 @@ class Nozzle:
         if not point.beta:
             return height
 
-        x_distance = np.abs(point.x - self.nozzle_x)
-        y_distance = point.y - self.nozzle_y
+        x_distance = np.abs(point.x - self.position.x)
+        y_distance = point.y - self.position.y
         alpha = np.arctan(x_distance / y_distance)
 
         adjustment_factor = np.cos(alpha + point.beta) / np.cos(alpha)
 
         return height * adjustment_factor
 
-    def _transform_line_to_rotated_system(self, line):
-        raise Exception
+    def _transform_line_into_rotated_system(self, line):
+        start_point = line.get_start_point()
+        end_point = line.get_end_point()
+
+        rotated_start_point = Calculator.rotate_around_by(origin=self.position, point=start_point, angle=-self.alpha)
+        rotated_end_point = Calculator.rotate_around_by(origin=self.position, point=end_point, angle=-self.alpha)
+
+        return Line(rotated_start_point, rotated_end_point)
 
     def _get_basic_spray_height(self, x):
         if self.measurement_crossing_left <= x <= self.measurement_crossing_right:
@@ -102,8 +107,8 @@ class Nozzle:
         start_point_measurement = Point(self.measurement_crossing_left, 0)
         end_point_measurement = Point(0, self.measurement_height)
 
-        x_diff = self.nozzle_x
-        y_diff = self.nozzle_y - self.measurement_height
+        x_diff = self.position.x
+        y_diff = self.position.y - self.measurement_height
 
         position_adjusted_end_point = Point(end_point_measurement.x + x_diff, end_point_measurement.y + y_diff)
         position_adjusted_start_point = Point(start_point_measurement.x + x_diff, start_point_measurement.y + y_diff)
@@ -111,15 +116,15 @@ class Nozzle:
         line_without_length_adjustment = Line(position_adjusted_start_point, position_adjusted_end_point)
         crossing_with_surface = Calculator.get_crossing_point(line_without_length_adjustment, surface_line)
 
-        line_from_nozzle_to_surface = Line(crossing_with_surface, Point(self.nozzle_x, self.nozzle_y))
+        line_from_nozzle_to_surface = Line(crossing_with_surface, Point(self.position.x, self.position.y))
         return line_from_nozzle_to_surface
 
     def get_right_outer_line(self, surface_line):
         start_point_measurement = Point(0, self.measurement_height)
         end_point_measurement = Point(self.measurement_crossing_right, 0)
 
-        x_diff = self.nozzle_x
-        y_diff = self.nozzle_y - self.measurement_height
+        x_diff = self.position.x
+        y_diff = self.position.y - self.measurement_height
 
         position_adjusted_start_point = Point(start_point_measurement.x + x_diff, start_point_measurement.y + y_diff)
         position_adjusted_end_point = Point(end_point_measurement.x + x_diff, end_point_measurement.y + y_diff)
@@ -127,7 +132,7 @@ class Nozzle:
         line_without_length_adjustment = Line(position_adjusted_start_point, position_adjusted_end_point)
         crossing_with_surface = Calculator.get_crossing_point(line_without_length_adjustment, surface_line)
 
-        line_from_nozzle_to_surface = Line(Point(self.nozzle_x, self.nozzle_y), crossing_with_surface)
+        line_from_nozzle_to_surface = Line(Point(self.position.x, self.position.y), crossing_with_surface)
         return line_from_nozzle_to_surface
 
     def is_radius_covered_by(self, line):

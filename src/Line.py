@@ -35,6 +35,12 @@ class Line:
     def get_y_values(self):
         return [point.y for point in self.points]
 
+    def get_start_point(self):
+        return self.start_point
+
+    def get_end_point(self):
+        return self.end_point
+
     def __calculate_angle(self):
         x_diff = self.end_point.x - self.start_point.x
         y_diff = self.end_point.y - self.start_point.y
